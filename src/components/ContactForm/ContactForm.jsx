@@ -1,11 +1,12 @@
 import { useId } from "react";
-import { nanoid } from "nanoid";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 import css from './ContactForm.module.css';
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "react-hot-toast";
+import { selectContacts } from "../../redux/contactsSlice";
+import { addContact } from "../../redux/contactsOps";
 
 const ContactForm = () => {
     const nameId = useId();
@@ -17,12 +18,11 @@ const ContactForm = () => {
     };
 
     const dispatch = useDispatch();
-    const contacts = useSelector(state => state.contacts.items);
+    const contacts = useSelector(selectContacts);
 
     const handleSubmit = (values, actions) => {
         const { name, number } = values;
         const newContact = {
-            id: nanoid(),
             name: name,
             number: number
         };
@@ -31,7 +31,7 @@ const ContactForm = () => {
             toast.error(`Contact with number ${newContact.number} already exists`);
             return;
         }
-        dispatch({ type: 'contacts/addContact', payload: newContact });
+        dispatch(addContact(newContact));
     actions.resetForm();
     };
     
